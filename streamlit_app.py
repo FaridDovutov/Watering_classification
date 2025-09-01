@@ -99,9 +99,9 @@ if st.sidebar.button('Получить прогноз'):
         # Получение тестовых данных
         X_test_df = pd.DataFrame(scaler.inverse_transform(imputer.inverse_transform(X_test)), columns=X_test.columns)
         
-        y_pred_proba_test = model.predict_proba(X_test_df)[:, 1]
+        y_pred_proba_test = model.predict_proba(X_test_scl)[:, 1]
         y_pred_test = (y_pred_proba_test > 0.5).astype(int)
-
+        
         accuracy = accuracy_score(y_test, y_pred_test)
         precision = precision_score(y_test, y_pred_test, zero_division=0)
         recall = recall_score(y_test, y_pred_test, zero_division=0)
