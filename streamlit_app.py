@@ -20,7 +20,7 @@ st.markdown("### Анализ производительности модели 
 # Загрузка данных
 @st.cache_data
 def load_data():
-    df = pd.read_csv('TARP.csv')
+    df = pd.read_csv('.streamlit/TARP.csv')
     return df
 
 df = load_data()
