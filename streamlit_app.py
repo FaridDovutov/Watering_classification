@@ -13,6 +13,7 @@ warnings.filterwarnings("ignore")
 # Загрузка обученной модели и препроцессоров
 @st.cache_resource
 def load_model_and_processors():
+    """Загружает модель и препроцессоры из файлов."""
     try:
         model = joblib.load('xgboost_model.pkl')
         imputer = joblib.load('imputer.pkl')
@@ -31,7 +32,7 @@ if model is None:
 st.title('Классификация потребности в поливе растений с использованием методов машинного обучения')
 
 # --- Вывод метрик обученной модели ---
-st.header("Модел XGBoostClassifier")
+st.header("Модель: XGBoostClassifier")
 st.header("Метрики обученной модели на тестовом наборе")
 st.markdown("Эти метрики показывают, насколько хорошо модель работает на невидимых данных.")
 
@@ -78,6 +79,24 @@ else:
 # --- Боковая панель для ввода данных ---
 st.sidebar.header("Ввод данных для прогноза")
 
+# Словарь для сопоставления английских и русских названий признаков
+feature_mapping = {
+    'Temperature': 'Температура',
+    ' Soil Humidity': 'Влажность почвы',
+    'Time': 'Время',
+    'Air temperature (C)': 'Температура воздуха (C)',
+    'Wind speed (Km/h)': 'Скорость ветра (Км/ч)',
+    'Air humidity (%)': 'Влажность воздуха (%)',
+    'Wind gust (Km/h)': 'Порыв ветра (Км/ч)',
+    'Pressure (KPa)': 'Давление (КПа)',
+    'ph': 'PH',
+    'rainfall': 'Количество осадков',
+    'N': 'Азот (N)',
+    'P': 'Фосфор (P)',
+    'K': 'Калий (K)',
+}
+
+# Диапазоны для признаков
 feature_ranges = {
     'Temperature': (0, 50),
     ' Soil Humidity': (0, 100),
@@ -95,9 +114,10 @@ feature_ranges = {
 }
 
 input_data = {}
-for feature, (min_val, max_val) in feature_ranges.items():
-    input_data[feature] = st.sidebar.slider(
-        f'Значение для "{feature}"',
+for eng_name, rus_name in feature_mapping.items():
+    min_val, max_val = feature_ranges[eng_name]
+    input_data[eng_name] = st.sidebar.slider(
+        f'{rus_name}',
         min_value=float(min_val),
         max_value=float(max_val),
         value=float((min_val + max_val) / 2)
